@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crime Index — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+</head>
+<body class="dashboard-body">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="18" stroke="#FF3B30" stroke-width="2"/>
+        <path d="M20 8 L20 20 L28 28" stroke="#FF3B30" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="3" fill="#FF3B30"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-main">CRIME INDEX</span>
+        <span class="logo-sub">Analytics</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="/reports" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Reports
+      </a>
+      <a href="/admin" class="nav-item admin-only hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Admin Panel
+        <span class="nav-badge">ADM</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:12px">Crime Types</div>
+      <div class="nav-item" style="cursor:default">
+        <span class="dot red" style="width:8px;height:8px;border-radius:50%;background:#FF3B30;flex-shrink:0"></span>
+        Theft
+      </div>
+      <div class="nav-item" style="cursor:default">
+        <span class="dot" style="width:8px;height:8px;border-radius:50%;background:#FF6B35;flex-shrink:0"></span>
+        Assault
+      </div>
+      <div class="nav-item" style="cursor:default">
+        <span class="dot" style="width:8px;height:8px;border-radius:50%;background:#FFB800;flex-shrink:0"></span>
+        Fraud
+      </div>
+      <div class="nav-item" style="cursor:default">
+        <span class="dot" style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0"></span>
+        Cybercrime
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar js-user-avatar">A</div>
+        <div class="user-details">
+          <div class="user-name js-user-name">Loading...</div>
+          <div class="user-role js-user-role">—</div>
+        </div>
+        <button class="logout-btn" onclick="ui.logout()" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Analytics Dashboard</span>
+        <span class="topbar-subtitle">Crime Index monitoring & statistics</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-status">
+          <div class="status-dot"></div>
+          Live
+        </div>
+        <div class="topbar-time" id="clock">--:--:--</div>
+        <button class="btn-sm btn-outline" onclick="refreshData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          Refresh
+        </button>
+        <button class="btn-sm btn-primary admin-only hidden" onclick="openAddModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Data
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- METRIC CARDS -->
+      <div class="metrics-grid">
+        <div class="metric-card theft">
+          <div class="metric-header">
+            <span class="metric-label">Theft</span>
+            <div class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-theft">—</div>
+          <div class="metric-footer">cases reported</div>
+        </div>
+
+        <div class="metric-card assault">
+          <div class="metric-header">
+            <span class="metric-label">Assault</span>
+            <div class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-assault">—</div>
+          <div class="metric-footer">cases reported</div>
+        </div>
+
+        <div class="metric-card fraud">
+          <div class="metric-header">
+            <span class="metric-label">Fraud</span>
+            <div class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-fraud">—</div>
+          <div class="metric-footer">cases reported</div>
+        </div>
+
+        <div class="metric-card cybercrime">
+          <div class="metric-header">
+            <span class="metric-label">Cybercrime</span>
+            <div class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-cybercrime">—</div>
+          <div class="metric-footer">cases reported</div>
+        </div>
+
+        <div class="metric-card crime-index">
+          <div class="metric-header">
+            <span class="metric-label">Crime Index</span>
+            <div class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+          </div>
+          <div class="metric-value" id="metric-crimeIndex">—</div>
+          <div class="metric-footer">composite score / 100</div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-grid">
+        <!-- Doughnut -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Crime Distribution</div>
+              <div class="chart-card-sub">Latest period breakdown</div>
+            </div>
+            <span class="chart-type-badge">Doughnut</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="doughnutChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bar -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Crime Comparison</div>
+              <div class="chart-card-sub">By category — current period</div>
+            </div>
+            <span class="chart-type-badge">Bar</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Line -->
+        <div class="chart-card chart-full">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Crime Trends Over Time</div>
+              <div class="chart-card-sub">Historical data — all categories</div>
+            </div>
+            <span class="chart-type-badge">Line</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA TABLE -->
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <div class="table-title">Crime Statistics Records</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px" id="record-count">Loading...</div>
+          </div>
+          <div class="table-actions">
+            <button class="btn-sm btn-outline" onclick="refreshData()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Refresh
+            </button>
+            <button class="btn-sm btn-primary admin-only hidden" onclick="openAddModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Entry
+            </button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Theft</th>
+                <th>Assault</th>
+                <th>Fraud</th>
+                <th>Cybercrime</th>
+                <th>Total</th>
+                <th>Crime Index</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="stats-tbody">
+              <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted)">Loading data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /layout -->
+
+<!-- ADD STATS MODAL -->
+<div class="modal-overlay hidden" id="add-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add Crime Statistics</span>
+      <button class="modal-close" onclick="closeAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="add-stats-form">
+      <div class="modal-body">
+        <div id="modal-alert" class="alert hidden"></div>
+        <div class="form-grid-2">
+          <div class="form-group-modal">
+            <label>Theft Cases</label>
+            <input type="number" id="f-theft" min="0" placeholder="e.g. 210" required/>
+          </div>
+          <div class="form-group-modal">
+            <label>Assault Cases</label>
+            <input type="number" id="f-assault" min="0" placeholder="e.g. 95" required/>
+          </div>
+          <div class="form-group-modal">
+            <label>Fraud Cases</label>
+            <input type="number" id="f-fraud" min="0" placeholder="e.g. 60" required/>
+          </div>
+          <div class="form-group-modal">
+            <label>Cybercrime Cases</label>
+            <input type="number" id="f-cybercrime" min="0" placeholder="e.g. 40" required/>
+          </div>
+          <div class="form-group-modal">
+            <label>Crime Index (0–100)</label>
+            <input type="number" id="f-crimeIndex" min="0" max="100" placeholder="e.g. 72" required/>
+          </div>
+          <div class="form-group-modal">
+            <label>Region</label>
+            <input type="text" id="f-region" placeholder="National"/>
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Notes (optional)</label>
+          <input type="text" id="f-notes" placeholder="Add any additional context…"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-sm btn-outline" onclick="closeAddModal()">Cancel</button>
+        <button type="submit" class="btn-sm btn-primary" id="add-submit-btn">
+          <span class="btn-text">Save Statistics</span>
+          <span class="btn-spinner hidden"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>
